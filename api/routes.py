@@ -1,19 +1,18 @@
-from flask import Flask, jsonify, request
-from flask.json import JSONEncoder
+from flask import Blueprint, jsonify, request
 from flask_mongoengine import MongoEngine
 from mongoengine import Document, BooleanField, IntField, StringField, DateTimeField
 from datetime import datetime
 import os
 import logging
 
-app = Flask(__name__)
+main = Blueprint('main',__name__)
 
 # MongoDB Atlas configuration
-app.config["MONGODB_SETTINGS"] = {
+main.config["MONGODB_SETTINGS"] = {
     "host": "mongodb+srv://lakshmanreddy458:CO4BzJ3Xo2NFEb8z@taskmaster.0ygad.mongodb.net/mydatabase?retryWrites=true&w=majority"
 }
 
-db = MongoEngine(app)
+db = MongoEngine(main)
 
 
 # User schema
@@ -42,7 +41,7 @@ class Item(Document):
     }
 
 # Check the connection status
-@app.route('/check_connection', methods=['GET'])
+@main.route('/check_connection', methods=['GET'])
 def check_connection():
     try:
         # Try to perform a simple query to check connection
@@ -52,11 +51,12 @@ def check_connection():
         logging.error(f"Error connecting to MongoDB: {e}")
         return jsonify({"status": "error", "message": f"MongoDB connection failed: {str(e)}"}), 500
 
-@app.route('/add_note' , methods=['POST'])
+@main.route('/add_note' , methods=['POST'])
 def add_note():
 
     try:
         data = request.json.get('data')
+        # print(data)
     #     data = {
     #     "status": True,
     #     "currency_value": 500,
@@ -78,9 +78,10 @@ def add_note():
         item.save()
         return jsonify({"status": "success", "message": "Note added successfully"}), 200
     except Exception as e:
+        print(e)
         return jsonify({"status": "failed", "message": "Error adding note"}), 400
 
-@app.route('/update_note', methods=['POST'])
+@main.route('/update_note', methods=['POST'])
 def update_note():
     data = request.json.get('data')
     uuid = data['uuid']
@@ -138,7 +139,7 @@ def update_note():
 
 # Route to get all item history entries
 
-@app.route("/note_data", methods=["GET"])
+@main.route("/note_data", methods=["GET"])
 def get_note_data():
     try:
         # Fetch all items from the database
@@ -149,6 +150,7 @@ def get_note_data():
             {
                 "status": item.status,
                 "currency_value": item.currency_value,
+                "currency_id" : item.currency_Id,
                 "uuid": item.uuid,
                 "created_date": item.created_date.strftime("%Y-%m-%d %H:%M:%S") if item.created_date else None,
                 "last_scanned_date": item.last_scanned_date.strftime("%Y-%m-%d %H:%M:%S") if item.last_scanned_date else None,
@@ -168,7 +170,7 @@ def get_note_data():
 
 
 
-@app.route('/get_history', methods=['POST'])
+@main.route('/get_history', methods=['POST'])
 def get_history():
     try:
         bank_name = request.json.get('uname')
@@ -182,7 +184,7 @@ def get_history():
                     "created_date": item.created_date,
                     "last_scanned_date": item.last_scanned_date
                 }
-            result.append(items_list)
+            result.mainend(items_list)
             
         
         response = {"status": "success", "data": result}
@@ -197,7 +199,7 @@ def check(uname, password):
     return user is not None
 
 # Route for user login
-@app.route('/login', methods=['POST'])
+@main.route('/login', methods=['POST'])
 def login():
     data = request.json
     print(data)
@@ -210,6 +212,3 @@ def login():
 
 
     
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
