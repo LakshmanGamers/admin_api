@@ -12,7 +12,6 @@ main = Blueprint('main',__name__)
 #     "host": "mongodb+srv://lakshmanreddy458:CO4BzJ3Xo2NFEb8z@taskmaster.0ygad.mongodb.net/mydatabase?retryWrites=true&w=majority"
 # }
 
-db = MongoEngine(main)
 
 
 # User schema
