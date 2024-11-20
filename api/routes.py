@@ -7,10 +7,10 @@ import logging
 
 main = Blueprint('main',__name__)
 
-# MongoDB Atlas configuration
-main.config["MONGODB_SETTINGS"] = {
-    "host": "mongodb+srv://lakshmanreddy458:CO4BzJ3Xo2NFEb8z@taskmaster.0ygad.mongodb.net/mydatabase?retryWrites=true&w=majority"
-}
+# # MongoDB Atlas configuration
+# main.config["MONGODB_SETTINGS"] = {
+#     "host": "mongodb+srv://lakshmanreddy458:CO4BzJ3Xo2NFEb8z@taskmaster.0ygad.mongodb.net/mydatabase?retryWrites=true&w=majority"
+# }
 
 db = MongoEngine(main)
 
